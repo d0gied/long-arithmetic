@@ -20,6 +20,10 @@ _deps
 /.vscode/
 /python
 
+# macOS
+.DS_Store
+.AppleDouble
+
 /.cache
 
 /test_results.xml
