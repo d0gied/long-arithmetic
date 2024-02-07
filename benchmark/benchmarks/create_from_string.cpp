@@ -8,5 +8,3 @@ static void CreateFromString(benchmark::State& state) {
     }
 }
 BENCHMARK(CreateFromString)->Range(1, 1 << 20);
-
-BENCHMARK_MAIN();
