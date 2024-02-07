@@ -66,6 +66,8 @@ class BigNumber {
 
     BigNumber operator-() const;
 
+    BigNumber negate() const;
+
     BigNumber abs() const;
 
     std::string to_string() const;
@@ -76,6 +78,8 @@ class BigNumber {
     std::vector<chunk_t> chunks;  // array of digit chunks
     size_t fractional_size;       // number of digits after the decimal point
     bool is_negative;             // true if the number is negative
+
+    BigNumber() : chunks(0, 0), fractional_size(0), is_negative(false){};  // default constructor
 
     void remove_leading_zeros();
 };

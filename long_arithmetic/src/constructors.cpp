@@ -68,6 +68,8 @@ BigNumber::BigNumber(const long long &other, size_t fractional_size) : BigNumber
 BigNumber::BigNumber(const float &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
 BigNumber::BigNumber(const double &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
 
+BigNumber::BigNumber(const BigNumber &other) : chunks(other.chunks), fractional_size(other.fractional_size), is_negative(other.is_negative) {}
+
 void BigNumber::remove_leading_zeros() {
     while (chunks.size() > 1 && chunks.back() == 0) {
         chunks.pop_back();
