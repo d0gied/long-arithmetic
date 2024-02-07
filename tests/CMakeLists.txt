@@ -14,6 +14,6 @@ add_executable(run_tests ${TESTS_SRC_FILES})
 target_link_libraries(run_tests gtest gtest_main long_arithmetic)
 include_directories(include)
 
-
+# add tests to cmake
 enable_testing()
 gtest_discover_tests(run_tests)

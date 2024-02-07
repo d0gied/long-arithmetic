@@ -11,6 +11,9 @@ set(CMAKE_CXX_STANDARD 17)
 # Добавьте поддиректорию для вашего модуля LongArithmetic
 add_subdirectory(long_arithmetic)
 
+# Add benchmarking
+add_subdirectory(benchmark)
+
 
 # Добавьте поддиректорию для ваших тестов
 enable_testing()
