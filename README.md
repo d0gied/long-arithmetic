@@ -9,6 +9,8 @@ C++ implementation of long arithmetics.
   - [Installation](#installation)
   - [Usage](#usage)
   - [Task](#task)
+  - [Test](#test)
+  - [Benchmark](#benchmark)
   - [Plan](#plan)
     - [Optional](#optional)
   - [Development](#development)
@@ -40,6 +42,19 @@ int main() {
 ```
 
 ## [Task](task.md)
+
+## Test
+
+```bash
+./build/tests/run_tests
+```
+
+## Benchmark
+
+```bash
+./build/benchmark/run_benchmark
+```
+
 
 ## Plan
 
