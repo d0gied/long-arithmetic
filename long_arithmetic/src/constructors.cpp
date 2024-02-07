@@ -30,14 +30,14 @@ BigNumber::BigNumber(const std::string &number, size_t fractional_size)
 
     // read the number from the end to the start to avoid reversing the string
     for (size_t i = 0; i < number_copy.size() - has_sign; i += CHUNK_DIGITS) {
-        size_t start = number_copy.size() - has_sign - i;
-        if (start < has_sign + CHUNK_DIGITS) {
+        size_t start = number_copy.size() - i;
+        if (start + has_sign < CHUNK_DIGITS) {
             start = has_sign;
         } else {
             start -= CHUNK_DIGITS;
         }
 
-        size_t end = number_copy.size() - has_sign - i;
+        size_t end = number_copy.size() - i;
 
         chunk_t chunk = std::stoull(number_copy.substr(start, end - start));
         chunks.push_back(chunk);
@@ -56,31 +56,21 @@ BigNumber::BigNumber(const std::string &number) {
     *this = BigNumber(number, fractional_size);
 }
 
-std::string BigNumber::to_string() const {
-    std::string number;
-    number += std::to_string(chunks.back());
-    for (size_t i = chunks.size() - 1; i > 0; --i) {
-        std::string chunk_str = std::to_string(chunks[i - 1]);
-        number += std::string(CHUNK_DIGITS - chunk_str.size(), '0') + chunk_str;
-    }
-    if (fractional_size == 0) {
-        return number;
-    }
-    if (fractional_size + 1 > number.size()) {  // +1 for the leading zero before the dot
-        number = std::string(fractional_size - number.size() + 1, '0') + number;
-    }
-    number.insert(number.size() - fractional_size, ".");
+BigNumber::BigNumber(const int &other) : BigNumber(std::to_string(other)) {}
+BigNumber::BigNumber(const long &other) : BigNumber(std::to_string(other)) {}
+BigNumber::BigNumber(const long long &other) : BigNumber(std::to_string(other)) {}
+BigNumber::BigNumber(const float &other) : BigNumber(std::to_string(other)) {}
+BigNumber::BigNumber(const double &other) : BigNumber(std::to_string(other)) {}
 
-    if (is_negative) {
-        number.insert(0, "-");
-    }
-    return number;
-}
+BigNumber::BigNumber(const int &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
+BigNumber::BigNumber(const long &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
+BigNumber::BigNumber(const long long &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
+BigNumber::BigNumber(const float &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
+BigNumber::BigNumber(const double &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
 
 void BigNumber::remove_leading_zeros() {
     while (chunks.size() > 1 && chunks.back() == 0) {
         chunks.pop_back();
     }
 }
-
 }  // namespace bignum

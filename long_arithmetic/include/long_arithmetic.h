@@ -30,8 +30,24 @@ class BigNumber {
     BigNumber(const std::string &number);
     BigNumber(const std::string &number, size_t fractional_size);
 
-    BigNumber(const int64_t &other);
-    BigNumber(const int64_t &other, size_t fractional_size);
+    BigNumber(const char *number) : BigNumber(std::string(number)) {}
+    BigNumber(const char *number, size_t fractional_size) : BigNumber(std::string(number), fractional_size) {}
+
+    BigNumber(const int &other);
+    BigNumber(const int &other, size_t fractional_size);
+
+    BigNumber(const long &other);
+    BigNumber(const long &other, size_t fractional_size);
+
+    BigNumber(const long long &other);
+    BigNumber(const long long &other, size_t fractional_size);
+
+    BigNumber(const float &other);
+    BigNumber(const float &other, size_t fractional_size);
+
+    BigNumber(const double &other);
+    BigNumber(const double &other, size_t fractional_size);
+
     BigNumber(const BigNumber &other);
 
     BigNumber copy() const;

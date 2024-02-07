@@ -7,6 +7,12 @@ TEST(Constructor, BigInt) {
     ASSERT_EQ(number_str, "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
 }
 
+TEST(Constructor, NegativeBigInt) {
+    bignum::BigNumber number("-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
+    std::string number_str = number.to_string();
+    ASSERT_EQ(number_str, "-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
+}
+
 TEST(Constructor, BigIntWithFractionalSize) {
     bignum::BigNumber number("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890", 10);
     std::string number_str = number.to_string();
@@ -25,7 +31,14 @@ TEST(Constructor, BigIntWithFractionalPartCut) {
     ASSERT_EQ(number_str, "123.45");
 }
 
-// int main(int argc, char **argv) {
-//     testing::InitGoogleTest(&argc, argv);
-//     return RUN_ALL_TESTS();
-// }
+TEST(Constructor, DirectString) {
+    bignum::BigNumber number = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+    std::string number_str = number.to_string();
+    ASSERT_EQ(number_str, "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
+}
+
+TEST(Constructor, DirectInt) {
+    bignum::BigNumber number = 1234567890123456789;
+    std::string number_str = number.to_string();
+    ASSERT_EQ(number_str, "1234567890123456789");
+}
