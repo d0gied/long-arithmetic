@@ -48,7 +48,7 @@ class BigNumber {
     BigNumber(const double &other);
     BigNumber(const double &other, size_t fractional_size);
 
-    BigNumber(const BigNumber &other);
+    // BigNumber(const BigNumber &other);
 
     BigNumber copy() const;
 
