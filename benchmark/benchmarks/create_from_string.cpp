@@ -2,8 +2,8 @@
 #include <long_arithmetic.h>
 
 static void CreateFromString(benchmark::State& state) {
+    std::string str(state.range(0), '1');
     for (auto _ : state) {
-        std::string str(state.range(0), '1');
         bignum::BigNumber number(str);
     }
 }

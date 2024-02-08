@@ -3,22 +3,32 @@
 namespace bignum {
 std::string BigNumber::to_string() const {
     std::string number;
-    number += std::to_string(chunks.back());
-    for (size_t i = chunks.size() - 1; i > 0; --i) {
-        std::string chunk_str = std::to_string(chunks[i - 1]);
-        number += std::string(CHUNK_DIGITS - chunk_str.size(), '0') + chunk_str;
-    }
-
-    if (fractional_size != 0) {
-        if (fractional_size + 1 > number.size()) {  // +1 for the leading zero before the dot
-            number = std::string(fractional_size - number.size() + 1, '0') + number;
-        }
-        number.insert(number.size() - fractional_size, ".");
+    size_t fractional_chunks = (fractional_size + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
+    size_t last_chunk_size = fractional_size % CHUNK_DIGITS;
+    if (last_chunk_size == 0) {
+        last_chunk_size = CHUNK_DIGITS;
     }
 
     if (is_negative) {
-        number.insert(0, "-");
+        number += '-';
     }
+
+    for (size_t i = chunks.size(); i > 1; --i) {  // process last chunk separately
+        std::string chunk = std::to_string(chunks[i - 1]);
+        if (i != chunks.size()) {
+            chunk = std::string(CHUNK_DIGITS - chunk.size(), '0') + chunk;
+        }
+        if (i == fractional_chunks) {
+            number += '.';  // add the dot before the first fractional chunk
+        }
+        number += chunk;
+    }
+    if (fractional_chunks == 1) {
+        number += '.';  // add the dot if there are no fractional chunks
+    }
+    std::string chunk = std::to_string(chunks[0]);
+    chunk = std::string(CHUNK_DIGITS - chunk.size(), '0') + chunk;
+    number += chunk.substr(0, last_chunk_size);  // add only the necessary part of the last chunk
     return number;
 }
 }  // namespace bignum

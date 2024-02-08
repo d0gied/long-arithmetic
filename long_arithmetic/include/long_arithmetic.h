@@ -79,6 +79,8 @@ class BigNumber {
     size_t fractional_size;       // number of digits after the decimal point
     bool is_negative;             // true if the number is negative
 
+    void _push_to_chunks(const std::string &number, size_t shift = 0);  // push a string to the chunks array
+
     BigNumber() : chunks(0, 0), fractional_size(0), is_negative(false){};  // default constructor
 
     void remove_leading_zeros();

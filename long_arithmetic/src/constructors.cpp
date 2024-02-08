@@ -1,58 +1,59 @@
 #include <long_arithmetic.h>
 
 namespace bignum {
-BigNumber::BigNumber(const std::string &number, size_t fractional_size)
-    : chunks(0, 0), fractional_size(fractional_size), is_negative(false) {
-    std::string number_copy = number;
 
-    size_t has_sign = 0;
-    if (number[0] == '-') {
-        is_negative = true;
-        has_sign = 1;
-    } else if (number[0] == '+') {
-        has_sign = 1;
-    }
+void BigNumber::_push_to_chunks(const std::string &number, size_t shift) {
+    size_t length = number.size();
+    size_t chunks_count = (length + shift + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
+    size_t old_size = chunks.size();
+    chunks.resize(old_size + chunks_count, 0);  // fill the new chunks with zeros
+    old_size += shift / CHUNK_DIGITS;           // add the shift to the old size, to skip ready chunks
+    shift %= CHUNK_DIGITS;
 
-    size_t dot = number.find('.');
-    if (dot != std::string::npos) {
-        number_copy.erase(dot, 1);
-        if (number_copy.size() - dot > fractional_size) {
-            number_copy = number_copy.substr(0, dot + fractional_size);
+    for (size_t i = 0; i < length; i += CHUNK_DIGITS) {
+        size_t chunk_start = length - i;
+        if (chunk_start + shift < CHUNK_DIGITS) {
+            chunk_start = 0;
         } else {
-            number_copy += std::string(fractional_size - (number_copy.size() - dot), '0');
+            chunk_start -= CHUNK_DIGITS - shift;
         }
-    } else {
-        number_copy += std::string(fractional_size, '0');
+        size_t chunk_end = length - i + shift;
+        chunk_t chunk = std::stoull(number.substr(chunk_start, chunk_end - chunk_start));
+        if (i == 0)
+            chunk *= pow(10, shift);
+        chunks[old_size + i / CHUNK_DIGITS] = chunk;
     }
-
-    size_t chunks_count = number_copy.size() / CHUNK_DIGITS + (number_copy.size() % CHUNK_DIGITS != 0);
-    chunks.reserve(chunks_count);
-
-    // read the number from the end to the start to avoid reversing the string
-    for (size_t i = 0; i < number_copy.size() - has_sign; i += CHUNK_DIGITS) {
-        size_t start = number_copy.size() - i;
-        if (start + has_sign < CHUNK_DIGITS) {
-            start = has_sign;
-        } else {
-            start -= CHUNK_DIGITS;
-        }
-
-        size_t end = number_copy.size() - i;
-
-        chunk_t chunk = std::stoull(number_copy.substr(start, end - start));
-        chunks.push_back(chunk);
-    }
-
-    remove_leading_zeros();
 }
 
-BigNumber::BigNumber(const std::string &number) {
+BigNumber::BigNumber(const std::string &number, size_t fractional_size)
+    : chunks(0, 0), fractional_size(fractional_size), is_negative(false) {
     size_t dot = number.find('.');
+    size_t shift = 0;
     if (dot != std::string::npos) {
-        fractional_size = number.size() - dot - 1;
+        // if the dot is found, push the floating part to the chunks
+        shift = fractional_size - (number.size() - dot - 1);                      // amount of zeros to add to the end
+        shift += (CHUNK_DIGITS - fractional_size % CHUNK_DIGITS) % CHUNK_DIGITS;  // align the shift to the chunk size
+        _push_to_chunks(number.substr(dot + 1), shift);
+        shift = 0;
     } else {
-        fractional_size = 0;
+        shift = fractional_size + (CHUNK_DIGITS - fractional_size % CHUNK_DIGITS) % CHUNK_DIGITS;  // align the shift to the chunk size
     }
+
+    size_t integer_size = dot != std::string::npos ? dot : number.size();  // amount of digits in the integer part
+    if (number[0] == '-') {
+        is_negative = true;
+        integer_size--;
+        _push_to_chunks(number.substr(1, integer_size), shift);
+    } else {
+        _push_to_chunks(number.substr(0, integer_size), shift);
+    }
+}
+
+BigNumber::BigNumber(const std::string &number) : fractional_size(0) {
+    size_t dot = number.find('.');
+    if (dot != std::string::npos)
+        fractional_size = number.size() - dot - 1;
+
     *this = BigNumber(number, fractional_size);
 }
 
