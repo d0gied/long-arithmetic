@@ -28,6 +28,6 @@ static void CompareLongToLong(benchmark::State& state) {
     }
 }
 
-BENCHMARK(CompareOneToLong)->Range(1, 1 << 20);
-BENCHMARK(CompareLongToOne)->Range(1, 1 << 20);
-BENCHMARK(CompareLongToLong)->Range(1, 1 << 20);
+// BENCHMARK(CompareOneToLong)->Range(1, 1 << 20);
+// BENCHMARK(CompareLongToOne)->Range(1, 1 << 20);
+// BENCHMARK(CompareLongToLong)->Range(1, 1 << 20);

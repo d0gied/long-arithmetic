@@ -59,25 +59,41 @@ int main() {
 ### Results
 
 ```cpp
---------------------------------------------------------------------
-Benchmark                          Time             CPU   Iterations
---------------------------------------------------------------------
-CompareLongToLong/1              401 ns          400 ns      1745383
-CompareLongToLong/8              407 ns          406 ns      1752616
-CompareLongToLong/64             406 ns          404 ns      1729655
-CompareLongToLong/512            402 ns          401 ns      1752028
-CompareLongToLong/4096           405 ns          404 ns      1752581
-CompareLongToLong/32768          403 ns          402 ns      1747418
-CompareLongToLong/262144         399 ns          397 ns      1743336
-CompareLongToLong/1048576        399 ns          398 ns      1781497
-CreateFromString/1               725 ns          723 ns       955892
-CreateFromString/8               735 ns          732 ns       947983
-CreateFromString/64             1154 ns         1151 ns       595831
-CreateFromString/512            3578 ns         3564 ns       196872
-CreateFromString/4096          22557 ns        22444 ns        31013
-CreateFromString/32768        174056 ns       173658 ns         4029
-CreateFromString/262144      1398363 ns      1391958 ns          505
-CreateFromString/1048576     5676835 ns      5656935 ns          123
+-------------------------------------------------------------------------
+Benchmark/digits                        Time             CPU   Iterations
+-------------------------------------------------------------------------
+AddLongToLong/1                     0.000 ms        0.000 ms      1776073
+AddLongToLong/8                     0.000 ms        0.000 ms      1774564
+AddLongToLong/64                    0.001 ms        0.001 ms      1230769
+AddLongToLong/512                   0.002 ms        0.002 ms       463610
+AddLongToLong/4096                  0.009 ms        0.009 ms        77641
+AddLongToLong/32768                 0.070 ms        0.069 ms        10130
+AddLongToLong/262144                0.557 ms        0.552 ms         1264
+AddLongToLong/1048576                2.23 ms         2.21 ms          317
+CreateFromString/1                  0.001 ms        0.000 ms      1395395
+CreateFromString/8                  0.001 ms        0.001 ms      1379963
+CreateFromString/64                 0.001 ms        0.001 ms       762477
+CreateFromString/512                0.003 ms        0.003 ms       219711
+CreateFromString/4096               0.022 ms        0.021 ms        32672
+CreateFromString/32768              0.169 ms        0.167 ms         4189
+CreateFromString/262144              1.35 ms         1.33 ms          525
+CreateFromString/1048576             5.46 ms         5.37 ms          129
+MultiplyLongToLong/1                0.001 ms        0.001 ms       996796
+MultiplyLongToLong/8                0.001 ms        0.001 ms      1016585
+MultiplyLongToLong/64               0.002 ms        0.002 ms       455987
+MultiplyLongToLong/512              0.026 ms        0.026 ms        26783
+MultiplyLongToLong/4096              1.49 ms         1.47 ms          476
+MultiplyLongToLong/32768             93.9 ms         92.5 ms            8
+MultiplyLongToLong/262144            5983 ms         5926 ms            1
+MultiplyLongToLong/1048576          95835 ms        94922 ms            1
+SubstractionLongToLong/1            0.001 ms        0.001 ms       508241
+SubstractionLongToLong/8            0.001 ms        0.001 ms       507898
+SubstractionLongToLong/64           0.002 ms        0.002 ms       363404
+SubstractionLongToLong/512          0.005 ms        0.005 ms       141966
+SubstractionLongToLong/4096         0.029 ms        0.029 ms        24139
+SubstractionLongToLong/32768        0.223 ms        0.221 ms         3166
+SubstractionLongToLong/262144        1.80 ms         1.78 ms          390
+SubstractionLongToLong/1048576       7.18 ms         7.11 ms           97
 ```
 
 ## Plan
