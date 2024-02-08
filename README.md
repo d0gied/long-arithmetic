@@ -137,8 +137,8 @@ SubstractionLongToLong/1048576       7.18 ms         7.11 ms           97
 7. [x] Add basic comparison operations for BigNumber.
 8. [x] Add addition and subtraction operations for BigNumber.
 9. [x] Add multiplication operation for BigNumber. 
-10. [ ] Add division operations for BigNumber.
-11. [ ] Realize Pi calculation with given precision.
+10. [ ] Add division operation for BigNumber.
+11. [ ] Implement Pi calculation with given precision.
 12. [ ] Measure time of Pi calculation.
 
 ### Optional
