@@ -10,7 +10,9 @@ C++ implementation of long arithmetics.
   - [Usage](#usage)
   - [Task](#task)
   - [Test](#test)
+    - [Help](#help)
   - [Benchmark](#benchmark)
+    - [Help](#help-1)
     - [Results](#results)
   - [Plan](#plan)
     - [Optional](#optional)
@@ -50,11 +52,39 @@ int main() {
 ./build/tests/run_tests
 ```
 
+### Help
+
+```bash
+./build/tests/run_tests --help
+```
+
 ## Benchmark
 
 ```bash
 ./build/benchmark/run_benchmark
 ```
+
+### Help
+  
+```bash
+$ ./build/benchmark/run_benchmark --help
+benchmark [--benchmark_list_tests={true|false}]
+          [--benchmark_filter=<regex>]
+          [--benchmark_min_time=`<integer>x` OR `<float>s` ]
+          [--benchmark_min_warmup_time=<min_warmup_time>]
+          [--benchmark_repetitions=<num_repetitions>]
+          [--benchmark_enable_random_interleaving={true|false}]
+          [--benchmark_report_aggregates_only={true|false}]
+          [--benchmark_display_aggregates_only={true|false}]
+          [--benchmark_format=<console|json|csv>]
+          [--benchmark_out=<filename>]
+          [--benchmark_out_format=<json|console|csv>]
+          [--benchmark_color={auto|true|false}]
+          [--benchmark_counters_tabular={true|false}]
+          [--benchmark_context=<key>=<value>,...]
+          [--benchmark_time_unit={ns|us|ms|s}]
+          [--v=<verbosity>]
+  ```
 
 ### Results
 
