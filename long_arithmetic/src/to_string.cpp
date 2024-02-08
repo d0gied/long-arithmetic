@@ -27,7 +27,8 @@ std::string BigNumber::to_string() const {
         number += '.';  // add the dot if there are no fractional chunks
     }
     std::string chunk = std::to_string(chunks[0]);
-    chunk = std::string(CHUNK_DIGITS - chunk.size(), '0') + chunk;
+    if (chunks.size() > 1)
+        chunk = std::string(CHUNK_DIGITS - chunk.size(), '0') + chunk;
     number += chunk.substr(0, last_chunk_size);  // add only the necessary part of the last chunk
     return number;
 }

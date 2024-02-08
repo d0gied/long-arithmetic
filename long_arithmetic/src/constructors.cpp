@@ -47,6 +47,10 @@ BigNumber::BigNumber(const std::string &number, size_t fractional_size)
     } else {
         _push_to_chunks(number.substr(0, integer_size), shift);
     }
+    remove_leading_zeros();
+    if (is_zero()) {
+        is_negative = false;  // zero is always positive
+    }
 }
 
 BigNumber::BigNumber(const std::string &number) : fractional_size(0) {

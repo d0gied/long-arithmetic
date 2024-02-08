@@ -67,8 +67,8 @@ class BigNumber {
     BigNumber operator-() const;
 
     BigNumber negate() const;
-
     BigNumber abs() const;
+    bool is_zero() const;
 
     std::string to_string() const;
 

@@ -42,3 +42,9 @@ TEST(Constructor, DirectInt) {
     std::string number_str = number.to_string();
     ASSERT_EQ(number_str, "1234567890123456789");
 }
+
+TEST(Constructor, NegativeZero) {
+    bignum::BigNumber number = "-0";
+    std::string number_str = number.to_string();
+    ASSERT_EQ(number_str, "0");
+}

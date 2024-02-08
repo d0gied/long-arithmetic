@@ -1,6 +1,7 @@
 #include <long_arithmetic.h>
 
 namespace bignum {
+
 bool BigNumber::operator==(const BigNumber& other) const {
     if (is_negative != other.is_negative) {
         return false;

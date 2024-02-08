@@ -22,4 +22,12 @@ BigNumber BigNumber::with_fractional_size(size_t fractional_size) const {
     return BigNumber(number, fractional_size);  // TODO: optimize
 }
 
+bool BigNumber::is_zero() const {
+    for (size_t i = 0; i < chunks.size(); ++i) {
+        if (chunks[i] != 0) {
+            return false;
+        }
+    }
+    return true;
+}
 }  // namespace bignum
