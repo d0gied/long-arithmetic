@@ -104,15 +104,17 @@ SubstractionLongToLong/1048576       7.18 ms         7.11 ms           97
 4. [x] Add google tests submodule.
 5. [x] Add basic tests for BigNumber.
 6. [x] Add conversion from BigNumber to string.
-7. [ ] Add basic comparison operations for BigNumber.
-8. [ ] Add addition and subtraction operations for BigNumber.
-9. [ ] Add multiplication and division operations for BigNumber.
-10. [ ] Realize Pi calculation with given precision.
-11. [ ] Measure time of Pi calculation.
+7. [x] Add basic comparison operations for BigNumber.
+8. [x] Add addition and subtraction operations for BigNumber.
+9. [x] Add multiplication operation for BigNumber. 
+10. [ ] Add division operations for BigNumber.
+11. [ ] Realize Pi calculation with given precision.
+12. [ ] Measure time of Pi calculation.
 
 ### Optional
 
-1. [ ] Add conversion from float to BigNumber.
+1. [x] Add conversion from float to BigNumber.
+2. [x] Add benchmark for BigNumber.
 
 
 ## Development
