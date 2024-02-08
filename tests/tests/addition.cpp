@@ -28,3 +28,10 @@ TEST(Addition, NegativePositive) {
     std::string number_str = (number1 + number2).to_string();
     ASSERT_EQ(number_str, "0");
 }
+
+TEST(Addition, Carry) {
+    bignum::BigNumber number1(std::string(100, '9'));
+    bignum::BigNumber number2("1");
+    std::string number_str = (number1 + number2).to_string();
+    ASSERT_EQ(number_str, "1" + std::string(100, '0'));
+}
