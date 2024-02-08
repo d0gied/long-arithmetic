@@ -50,13 +50,6 @@ class BigNumber {
 
     // BigNumber(const BigNumber &other);
 
-    BigNumber copy() const;
-
-    BigNumber operator+(const BigNumber &other) const;
-    BigNumber operator-(const BigNumber &other) const;
-    BigNumber operator*(const BigNumber &other) const;
-    BigNumber operator/(const BigNumber &other) const;
-
     bool operator==(const BigNumber &other) const;
     bool operator!=(const BigNumber &other) const;
     bool operator<(const BigNumber &other) const;
@@ -64,28 +57,34 @@ class BigNumber {
     bool operator<=(const BigNumber &other) const;
     bool operator>=(const BigNumber &other) const;
 
-    BigNumber operator-() const;
+    friend const BigNumber operator+(const BigNumber &a, const BigNumber &b);
+    friend const BigNumber operator-(const BigNumber &a, const BigNumber &b);
+    friend const BigNumber operator*(const BigNumber &a, const BigNumber &b);
+    friend const BigNumber operator/(const BigNumber &a, const BigNumber &b);
 
-    BigNumber negate() const;
-    BigNumber abs() const;
+    const BigNumber operator-() const;
+
+    const BigNumber negate() const;
+    const BigNumber abs() const;
     bool is_zero() const;
 
     std::string to_string() const;
 
-    BigNumber with_fractional_size(size_t fractional_size) const;
+    const BigNumber with_fractional_size(size_t fractional_size) const;
 
    private:
-    std::vector<chunk_t> chunks;  // array of digit chunks
-    size_t fractional_size;       // number of digits after the decimal point
-    bool is_negative;             // true if the number is negative
+    std::vector<chunk_t> _chunks;  // array of digit chunks
+    size_t _fractional_size;       // number of digits after the decimal point
+    bool _is_negative;             // true if the number is negative
 
     void _push_to_chunks(const std::string &number, size_t shift = 0);  // push a string to the chunks array
 
-    BigNumber() : chunks(0, 0), fractional_size(0), is_negative(false){};  // default constructor
+    BigNumber() : _chunks(0, 0), _fractional_size(0), _is_negative(false){};  // default constructor
 
-    void remove_leading_zeros();
+    void _remove_leading_zeros();
 
     const BigNumber _add(const BigNumber &other) const;
     const BigNumber _subtract(const BigNumber &other) const;
 };
+
 }  // namespace bignum
