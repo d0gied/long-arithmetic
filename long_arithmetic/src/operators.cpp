@@ -83,4 +83,12 @@ BigNumber BigNumber::operator-() const {
     return negate();
 }
 
+BigNumber BigNumber::operator+(const BigNumber& other) const {
+    return _add(other);
+}
+
+BigNumber BigNumber::operator-(const BigNumber& other) const {
+    return _subtract(other);
+}
+
 }  // namespace bignum

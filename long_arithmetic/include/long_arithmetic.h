@@ -84,5 +84,8 @@ class BigNumber {
     BigNumber() : chunks(0, 0), fractional_size(0), is_negative(false){};  // default constructor
 
     void remove_leading_zeros();
+
+    const BigNumber _add(const BigNumber &other) const;
+    const BigNumber _subtract(const BigNumber &other) const;
 };
 }  // namespace bignum
