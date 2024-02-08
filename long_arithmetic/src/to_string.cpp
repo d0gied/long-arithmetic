@@ -13,23 +13,34 @@ std::string BigNumber::to_string() const {
         number += '-';
     }
 
-    for (size_t i = _chunks.size(); i > 1; --i) {  // process last chunk separately
-        std::string chunk = std::to_string(_chunks[i - 1]);
-        if (i != _chunks.size()) {
+    if (fractional_chunks >= _chunks.size()) {
+        number += "0.";
+        for (size_t i = 0; i < fractional_chunks - _chunks.size(); ++i) {
+            number += std::string(CHUNK_DIGITS, '0');
+        }
+        for (size_t i = _chunks.size(); i > 0; --i) {
+            std::string chunk = std::to_string(_chunks[i - 1]);
             chunk = std::string(CHUNK_DIGITS - chunk.size(), '0') + chunk;
+            if (i == 1)
+                number += chunk.substr(0, last_chunk_size);
+            else
+                number += chunk;
         }
-        if (i == fractional_chunks) {
-            number += '.';  // add the dot before the first fractional chunk
+    } else {
+        for (size_t i = _chunks.size(); i > 0; --i) {
+            std::string chunk = std::to_string(_chunks[i - 1]);
+            if (i != _chunks.size()) {
+                chunk = std::string(CHUNK_DIGITS - chunk.size(), '0') + chunk;
+            }
+            if (i == fractional_chunks) {
+                number += '.';  // add the dot before the first fractional chunk
+            }
+            if (i == 1)
+                number += chunk.substr(0, last_chunk_size);
+            else
+                number += chunk;
         }
-        number += chunk;
     }
-    if (fractional_chunks == 1) {
-        number += '.';  // add the dot if there are no fractional chunks
-    }
-    std::string chunk = std::to_string(_chunks[0]);
-    if (_chunks.size() > 1)
-        chunk = std::string(CHUNK_DIGITS - chunk.size(), '0') + chunk;
-    number += chunk.substr(0, last_chunk_size);  // add only the necessary part of the last chunk
     return number;
 }
 }  // namespace bignum

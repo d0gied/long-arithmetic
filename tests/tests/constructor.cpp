@@ -48,3 +48,9 @@ TEST(Constructor, NegativeZero) {
     std::string number_str = number.to_string();
     ASSERT_EQ(number_str, "0");
 }
+
+TEST(Constructor, LessThanOne) {
+    bignum::BigNumber number = "0.123";
+    std::string number_str = number.to_string();
+    ASSERT_EQ(number_str, "0.123");
+}

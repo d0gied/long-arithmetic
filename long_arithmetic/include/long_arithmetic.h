@@ -6,10 +6,12 @@
 #include <string>
 #include <vector>
 
-#define CHUNK_SIZE 64    // number of bits in a batch
-#define CHUNK_DIGITS 16  // 18 digits + 1 for carry
+#define CHUNK_SIZE 64   // number of bits in a batch
+#define CHUNK_DIGITS 9  // number of decimal digits in a batch
 
-#if CHUNK_SIZE == 64
+#if CHUNK_SIZE == 128
+typedef __uint128_t chunk_t;
+#elif CHUNK_SIZE == 64
 typedef uint64_t chunk_t;
 #elif CHUNK_SIZE == 32
 typedef uint32_t chunk_t;
@@ -85,6 +87,8 @@ class BigNumber {
 
     const BigNumber _add(const BigNumber &other) const;
     const BigNumber _subtract(const BigNumber &other) const;
+    const BigNumber _multiply(const BigNumber &other) const;
+    const BigNumber _divide(const BigNumber &other) const;
 };
 
 }  // namespace bignum

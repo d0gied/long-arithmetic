@@ -25,8 +25,17 @@ bool BigNumber::operator<(const BigNumber& other) const {
     BigNumber a = *this;
     BigNumber b = other;
 
-    size_t integer_part1 = a._chunks.size() - a._fractional_size;
-    size_t integer_part2 = b._chunks.size() - b._fractional_size;
+    const size_t& a_frac_chunks = (a._fractional_size + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
+    const size_t& b_frac_chunks = (b._fractional_size + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
+
+    const size_t& a_int_chunks = a._chunks.size() >= a_frac_chunks ? a._chunks.size() - a_frac_chunks : 0;
+    const size_t& b_int_chunks = b._chunks.size() >= b_frac_chunks ? b._chunks.size() - b_frac_chunks : 0;
+
+    const size_t& max_frac_chunks = std::max(a_frac_chunks, b_frac_chunks);
+    const size_t& max_int_chunks = std::max(a_int_chunks, b_int_chunks);
+
+    const size_t& a_chunk_offset = max_frac_chunks - a_frac_chunks;
+    const size_t& b_chunk_offset = max_frac_chunks - b_frac_chunks;
 
     if (a._is_negative && !b._is_negative) {
         return true;
@@ -35,34 +44,31 @@ bool BigNumber::operator<(const BigNumber& other) const {
         return false;
     }
 
-    if (integer_part1 < integer_part2) {
+    if (a_int_chunks < b_int_chunks) {
         return !_is_negative;
     }
 
-    if (integer_part1 > integer_part2) {
+    if (a_int_chunks > b_int_chunks) {
         return _is_negative;
     }
 
-    if (a._chunks.size() > b._chunks.size()) {
-        b = b.with_fractional_size(a._fractional_size);
-    }
-    if (a._chunks.size() < b._chunks.size()) {
-        a = a.with_fractional_size(b._fractional_size);
-    }
+    for (size_t i = max_int_chunks + max_frac_chunks; i > 0; --i) {
+        chunk_t a_chunk = 0;
+        chunk_t b_chunk = 0;
 
-    for (size_t i = a._chunks.size(); i > 0; --i) {
-        if (a._chunks[i - 1] < b._chunks[i - 1]) {
+        if (i > a_chunk_offset && i <= a_chunk_offset + a._chunks.size()) {
+            a_chunk = a._chunks[i - a_chunk_offset - 1];
+        }
+        if (i > b_chunk_offset && i <= b_chunk_offset + b._chunks.size()) {
+            b_chunk = b._chunks[i - b_chunk_offset - 1];
+        }
+
+        if (a_chunk < b_chunk) {
             return !_is_negative;
         }
-        if (a._chunks[i - 1] > b._chunks[i - 1]) {
+        if (a_chunk > b_chunk) {
             return _is_negative;
         }
-    }
-    if (a._chunks[0] < b._chunks[0]) {
-        return !_is_negative;
-    }
-    if (a._chunks[0] > b._chunks[0]) {
-        return _is_negative;
     }
     return false;  // equal
 }
@@ -89,6 +95,10 @@ const BigNumber operator+(const BigNumber& a, const BigNumber& b) {
 
 const BigNumber operator-(const BigNumber& a, const BigNumber& b) {
     return a._subtract(b);
+}
+
+const BigNumber operator*(const BigNumber& a, const BigNumber& b) {
+    return a._multiply(b);
 }
 
 }  // namespace bignum
