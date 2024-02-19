@@ -16,4 +16,5 @@ include_directories(include)
 
 # add tests to cmake
 enable_testing()
+include(GoogleTest)
 gtest_discover_tests(run_tests)

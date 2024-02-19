@@ -2,45 +2,41 @@
 
 namespace bignum {
 std::string BigNumber::to_string() const {
+    if (_is_zero())
+        return "0";
+
     std::string number;
-    size_t fractional_chunks = (_fractional_size + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
-    size_t last_chunk_size = _fractional_size % CHUNK_DIGITS;
-    if (last_chunk_size == 0) {
-        last_chunk_size = CHUNK_DIGITS;
-    }
-
     if (_is_negative) {
-        number += '-';
+        number.push_back('-');
     }
 
-    if (fractional_chunks >= _chunks.size()) {
-        number += "0.";
-        for (size_t i = 0; i < fractional_chunks - _chunks.size(); ++i) {
-            number += std::string(CHUNK_DIGITS, '0');
+    const size_t& chunks = _chunks.size();
+    const int32_t& exp = _exponent;
+    const int32_t& max_exp = std::max(exp + static_cast<int32_t>(chunks) - 1, 0);
+    const int32_t& min_exp = std::min(exp, 0);
+
+    for (int32_t i = max_exp; i >= min_exp; --i) {
+        if (i == -1) {
+            number += '.';
         }
-        for (size_t i = _chunks.size(); i > 0; --i) {
-            std::string chunk = std::to_string(_chunks[i - 1]);
+        std::string chunk = std::to_string(_get_chunk(i));
+        if (i != max_exp)
             chunk = std::string(CHUNK_DIGITS - chunk.size(), '0') + chunk;
-            if (i == 1)
-                number += chunk.substr(0, last_chunk_size);
-            else
-                number += chunk;
-        }
-    } else {
-        for (size_t i = _chunks.size(); i > 0; --i) {
-            std::string chunk = std::to_string(_chunks[i - 1]);
-            if (i != _chunks.size()) {
-                chunk = std::string(CHUNK_DIGITS - chunk.size(), '0') + chunk;
-            }
-            if (i == fractional_chunks) {
-                number += '.';  // add the dot before the first fractional chunk
-            }
-            if (i == 1)
-                number += chunk.substr(0, last_chunk_size);
-            else
-                number += chunk;
-        }
+        number += chunk;
     }
+
+    if (min_exp < 0) {
+        size_t suff_zeros = 0;
+        for (size_t i = number.size() - 1; i > 0; --i) {
+            if (number[i] == '0') {
+                ++suff_zeros;
+            } else {
+                break;
+            }
+        }
+        number.erase(number.size() - suff_zeros, suff_zeros);
+    }
+
     return number;
 }
 }  // namespace bignum

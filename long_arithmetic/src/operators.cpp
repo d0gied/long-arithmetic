@@ -3,34 +3,21 @@
 namespace bignum {
 
 bool operator==(const BigNumber& a, const BigNumber& b) {
-    if (a._is_negative != b._is_negative) {
+    if (a._is_negative != b._is_negative)
         return false;
-    }
 
-    const size_t& a_frac_chunks = (a._fractional_size + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
-    const size_t& b_frac_chunks = (b._fractional_size + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
+    const size_t& a_chunks = a._chunks.size();
+    const size_t& b_chunks = b._chunks.size();
+    if (a_chunks != b_chunks)
+        return false;
 
-    const size_t& a_int_chunks = a._chunks.size() >= a_frac_chunks ? a._chunks.size() - a_frac_chunks : 0;
-    const size_t& b_int_chunks = b._chunks.size() >= b_frac_chunks ? b._chunks.size() - b_frac_chunks : 0;
+    const int32_t& a_exp = a._exponent;
+    const int32_t& b_exp = b._exponent;
+    if (a_exp != b_exp)
+        return false;
 
-    const size_t& max_frac_chunks = std::max(a_frac_chunks, b_frac_chunks);
-    const size_t& max_int_chunks = std::max(a_int_chunks, b_int_chunks);
-
-    const size_t& a_chunk_offset = max_frac_chunks - a_frac_chunks;
-    const size_t& b_chunk_offset = max_frac_chunks - b_frac_chunks;
-
-    for (size_t i = 0; i < max_int_chunks + max_frac_chunks; ++i) {
-        chunk_t a_chunk = 0;
-        chunk_t b_chunk = 0;
-
-        if (i >= a_chunk_offset && i < a_chunk_offset + a._chunks.size()) {
-            a_chunk = a._chunks[i - a_chunk_offset];
-        }
-        if (i >= b_chunk_offset && i < b_chunk_offset + b._chunks.size()) {
-            b_chunk = b._chunks[i - b_chunk_offset];
-        }
-
-        if (a_chunk != b_chunk) {
+    for (size_t i = 0; i < a_chunks; ++i) {
+        if (a._chunks[i] != b._chunks[i]) {
             return false;
         }
     }
@@ -43,18 +30,6 @@ bool operator!=(const BigNumber& a, const BigNumber& b) {
 }
 
 bool operator<(const BigNumber& a, const BigNumber& b) {
-    const size_t& a_frac_chunks = (a._fractional_size + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
-    const size_t& b_frac_chunks = (b._fractional_size + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
-
-    const size_t& a_int_chunks = a._chunks.size() >= a_frac_chunks ? a._chunks.size() - a_frac_chunks : 0;
-    const size_t& b_int_chunks = b._chunks.size() >= b_frac_chunks ? b._chunks.size() - b_frac_chunks : 0;
-
-    const size_t& max_frac_chunks = std::max(a_frac_chunks, b_frac_chunks);
-    const size_t& max_int_chunks = std::max(a_int_chunks, b_int_chunks);
-
-    const size_t& a_chunk_offset = max_frac_chunks - a_frac_chunks;
-    const size_t& b_chunk_offset = max_frac_chunks - b_frac_chunks;
-
     if (a._is_negative && !b._is_negative) {
         return true;
     }
@@ -62,33 +37,29 @@ bool operator<(const BigNumber& a, const BigNumber& b) {
         return false;
     }
 
-    if (a_int_chunks < b_int_chunks) {
+    const size_t& a_chunks = a._chunks.size();
+    const size_t& b_chunks = b._chunks.size();
+    const int32_t& a_exp = a._exponent;
+    const int32_t& b_exp = b._exponent;
+    const int32_t a_max_exp = a_exp + a_chunks;
+    const int32_t b_max_exp = b_exp + b_chunks;
+
+    if (a_max_exp < b_max_exp)
         return !a._is_negative;
-    }
-
-    if (a_int_chunks > b_int_chunks) {
+    if (a_max_exp > b_max_exp)
         return a._is_negative;
-    }
 
-    for (size_t i = max_int_chunks + max_frac_chunks; i > 0; --i) {
-        chunk_t a_chunk = 0;
-        chunk_t b_chunk = 0;
+    const int32_t& min_exp = std::min(a_exp, b_exp);
 
-        if (i > a_chunk_offset && i <= a_chunk_offset + a._chunks.size()) {
-            a_chunk = a._chunks[i - a_chunk_offset - 1];
-        }
-        if (i > b_chunk_offset && i <= b_chunk_offset + b._chunks.size()) {
-            b_chunk = b._chunks[i - b_chunk_offset - 1];
-        }
-
-        if (a_chunk < b_chunk) {
+    for (int32_t i = a_max_exp; i >= min_exp; --i) {
+        chunk_t a_chunk = a._get_chunk(i);
+        chunk_t b_chunk = b._get_chunk(i);
+        if (a_chunk < b_chunk)
             return !a._is_negative;
-        }
-        if (a_chunk > b_chunk) {
+        if (a_chunk > b_chunk)
             return a._is_negative;
-        }
     }
-    return false;  // equal
+    return false;  // a == b
 }
 
 bool operator>(const BigNumber& a, const BigNumber& b) {

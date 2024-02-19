@@ -3,60 +3,43 @@
 namespace bignum {
 const BigNumber BigNumber::_subtract(const BigNumber& other) const {
     if (_is_negative != other._is_negative) {
-        return _add(other.negate());
+        return _add(other._negate());
+    }
+
+    if (_abs() < other._abs()) {
+        return other._subtract(*this)._negate();
     }
 
     const BigNumber& a = *this;
     const BigNumber& b = other;
 
-    if (a.abs() < b.abs()) {
-        return b._subtract(a).negate();
-    }
+    const size_t& a_chunks = a._chunks.size();
+    const size_t& b_chunks = b._chunks.size();
 
-    BigNumber result;
-    result._is_negative = _is_negative;
+    const int32_t& max_exp = std::max(a._exponent + a_chunks, b._exponent + b_chunks);
+    const int32_t& min_exp = std::min(a._exponent, b._exponent);
 
-    const size_t& a_frac_chunks = (a._fractional_size + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
-    const size_t& b_frac_chunks = (b._fractional_size + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
-    const size_t& c_frac_chunks = std::max(a_frac_chunks, b_frac_chunks);
+    BigNumber c;
+    c._is_negative = _is_negative;
+    c._chunks.resize(max_exp - min_exp + 1, 0);  // +1 for borrow
+    c._exponent = min_exp;
 
-    const size_t& a_int_chunks = a._chunks.size() - a_frac_chunks;
-    const size_t& b_int_chunks = b._chunks.size() - b_frac_chunks;
-    const size_t& c_int_chunks = std::max(a_int_chunks, b_int_chunks) + 1;  // +1 for the carry
-
-    const size_t& a_chunk_offset = c_frac_chunks - a_frac_chunks;  // 0 if a_frac_chunks >= c_frac_chunks
-    const size_t& b_chunk_offset = c_frac_chunks - b_frac_chunks;  // 0 if b_frac_chunks >= c_frac_chunks
-
-    result._chunks.resize(c_int_chunks + c_frac_chunks);
-
-    chunk_t carry = 0;
-
-    for (size_t i = 0; i < c_int_chunks + c_frac_chunks; ++i) {
-        chunk_t a_chunk = 0;
-        chunk_t b_chunk = 0;
-
-        if (i >= a_chunk_offset && i < a_chunk_offset + a._chunks.size()) {
-            a_chunk = a._chunks[i - a_chunk_offset];
-        }
-        if (i >= b_chunk_offset && i < b_chunk_offset + b._chunks.size()) {
-            b_chunk = b._chunks[i - b_chunk_offset];
-        }
-
-        if (a_chunk < b_chunk + carry) {
-            result._chunks[i] = a_chunk + CHUNK_BASE - b_chunk - carry;
-            carry = 1;
+    chunk_t borrow = 0;
+    for (size_t i = 0; i < c._chunks.size(); ++i) {
+        chunk_t a_chunk = a._get_chunk(i + min_exp);
+        chunk_t b_chunk = b._get_chunk(i + min_exp);
+        chunk_t diff = 0;
+        if (a_chunk < b_chunk + borrow) {
+            diff = CHUNK_BASE + a_chunk - b_chunk - borrow;
+            borrow = 1;
         } else {
-            result._chunks[i] = a_chunk - b_chunk - carry;
-            carry = 0;
+            diff = a_chunk - b_chunk - borrow;
+            borrow = 0;
         }
+        c._set_chunk(i + min_exp, diff);
     }
 
-    result._remove_leading_zeros();
-
-    if (result._is_negative && result.is_zero()) {
-        result._is_negative = false;
-    }
-
-    return result;
+    c._strip_zeros();
+    return c;
 }
 }  // namespace bignum

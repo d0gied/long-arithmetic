@@ -2,63 +2,64 @@
 
 namespace bignum {
 
-void BigNumber::_push_to_chunks(const std::string &number, size_t shift) {
-    size_t length = number.size();
-    size_t chunks_count = (length + shift + CHUNK_DIGITS - 1) / CHUNK_DIGITS;
-    size_t old_size = _chunks.size();
-    _chunks.resize(old_size + chunks_count, 0);  // fill the new chunks with zeros
-    old_size += shift / CHUNK_DIGITS;            // add the shift to the old size, to skip ready chunks
-    shift %= CHUNK_DIGITS;
-
-    for (size_t i = 0; i < length; i += CHUNK_DIGITS) {
-        size_t chunk_start = length - i;
-        if (chunk_start + shift < CHUNK_DIGITS) {
-            chunk_start = 0;
-        } else {
-            chunk_start -= CHUNK_DIGITS - shift;
-        }
-        size_t chunk_end = length - i + shift;
-        chunk_t chunk = std::stoull(number.substr(chunk_start, chunk_end - chunk_start));
-        if (i == 0)
-            chunk *= pow(10, shift);
-        _chunks[old_size + i / CHUNK_DIGITS] = chunk;
-    }
+void BigNumber::_pad_left(size_t count) {
+    _chunks.insert(_chunks.begin(), count, 0);  // insert count zeros at the beginning
+    _exponent += count;
 }
 
-BigNumber::BigNumber(const std::string &number, size_t fractional_size)
-    : _chunks(0, 0), _fractional_size(fractional_size), _is_negative(false) {
-    size_t dot = number.find('.');
-    size_t shift = 0;
+void BigNumber::_set_chunk(const int32_t &exponent, const chunk_t &value) {
+    int32_t chunk_index = exponent - _exponent;
+
+    if (chunk_index >= static_cast<int32_t>(_chunks.size())) {
+        _chunks.resize(chunk_index + 1, 0);
+    }
+    if (chunk_index < 0) {
+        _pad_left(-chunk_index);
+        chunk_index = 0;
+    }
+
+    _chunks[chunk_index] = value;
+}
+
+const chunk_t BigNumber::_get_chunk(const int32_t &exponent) const {
+    int32_t chunk_index = exponent - _exponent;
+    if (chunk_index < 0 || chunk_index >= static_cast<int32_t>(_chunks.size())) {
+        return 0;
+    }
+    return _chunks[chunk_index];
+}
+
+BigNumber::BigNumber(const std::string &number)
+    : _chunks(0, 0), _exponent(0), _is_negative(false) {
+    if (number.empty()) {
+        throw std::invalid_argument("Empty string");
+    }
+    std::string num = number;
+
+    size_t dot = num.find('.');
     if (dot != std::string::npos) {
-        // if the dot is found, push the floating part to the chunks
-        shift = fractional_size - (number.size() - dot - 1);                      // amount of zeros to add to the end
-        shift += (CHUNK_DIGITS - fractional_size % CHUNK_DIGITS) % CHUNK_DIGITS;  // align the shift to the chunk size
-        _push_to_chunks(number.substr(dot + 1), shift);
-        shift = 0;
-    } else {
-        shift = fractional_size + (CHUNK_DIGITS - fractional_size % CHUNK_DIGITS) % CHUNK_DIGITS;  // align the shift to the chunk size
+        size_t frac_size = num.size() - dot - 1;
+        _exponent = -(frac_size / CHUNK_DIGITS + (frac_size % CHUNK_DIGITS != 0));  // ceil(frac_size / CHUNK_DIGITS)
+        num.erase(dot, 1);
+        num += std::string(-_exponent * CHUNK_DIGITS - frac_size, '0');  // pad with zeros
     }
 
-    size_t integer_size = dot != std::string::npos ? dot : number.size();  // amount of digits in the integer part
-    if (number[0] == '-') {
+    if (num[0] == '-') {
         _is_negative = true;
-        integer_size--;
-        _push_to_chunks(number.substr(1, integer_size), shift);
-    } else {
-        _push_to_chunks(number.substr(0, integer_size), shift);
+        num.erase(0, 1);
     }
-    _remove_leading_zeros();
-    if (is_zero()) {
-        _is_negative = false;  // zero is always positive
+
+    const size_t &chunks_count = num.size() / CHUNK_DIGITS + (num.size() % CHUNK_DIGITS != 0);
+    num = std::string(chunks_count * CHUNK_DIGITS - num.size(), '0') + num;
+
+    _chunks.resize(chunks_count, 0);
+
+    for (size_t i = 0; i < chunks_count; i++) {
+        size_t start = num.size() - (i + 1) * CHUNK_DIGITS;
+        _chunks[i] = std::stoull(num.substr(start, CHUNK_DIGITS));
     }
-}
 
-BigNumber::BigNumber(const std::string &number) : _fractional_size(0) {
-    size_t dot = number.find('.');
-    if (dot != std::string::npos)
-        _fractional_size = number.size() - dot - 1;
-
-    *this = BigNumber(number, _fractional_size);
+    _strip_zeros();
 }
 
 BigNumber::BigNumber(const int &other) : BigNumber(std::to_string(other)) {}
@@ -67,17 +68,43 @@ BigNumber::BigNumber(const long long &other) : BigNumber(std::to_string(other)) 
 BigNumber::BigNumber(const float &other) : BigNumber(std::to_string(other)) {}
 BigNumber::BigNumber(const double &other) : BigNumber(std::to_string(other)) {}
 
-BigNumber::BigNumber(const int &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
-BigNumber::BigNumber(const long &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
-BigNumber::BigNumber(const long long &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
-BigNumber::BigNumber(const float &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
-BigNumber::BigNumber(const double &other, size_t fractional_size) : BigNumber(std::to_string(other), fractional_size) {}
+const BigNumber operator""_bn(const char *number) {
+    return BigNumber(std::string(number));
+}
+
+const BigNumber operator""_bn(const char *number, size_t size) {
+    return BigNumber(std::string(number, size));
+}
 
 // BigNumber::BigNumber(const BigNumber &other) : chunks(other.chunks), fractional_size(other.fractional_size), is_negative(other.is_negative) {}
 
-void BigNumber::_remove_leading_zeros() {
-    while (_chunks.size() > 1 && _chunks.back() == 0) {
-        _chunks.pop_back();
+void BigNumber::_strip_zeros() {
+    size_t pref_zeros = 0;
+    size_t suff_zeros = 0;
+    for (size_t i = 0; i < _chunks.size(); ++i) {
+        if (_chunks[i] == 0) {
+            pref_zeros++;
+        } else {
+            break;
+        }
     }
+    for (size_t i = _chunks.size(); i > 0; --i) {
+        if (_chunks[i - 1] == 0) {
+            suff_zeros++;
+        } else {
+            break;
+        }
+    }
+
+    if (pref_zeros == _chunks.size()) {  // if the number is zero
+        _exponent = 0;
+        _is_negative = false;
+        _chunks.resize(0, 0);
+        return;
+    }
+
+    _exponent += pref_zeros;
+    _chunks.erase(_chunks.begin(), _chunks.begin() + pref_zeros);
+    _chunks.resize(_chunks.size() - suff_zeros);
 }
 }  // namespace bignum
