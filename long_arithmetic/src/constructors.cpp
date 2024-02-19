@@ -2,35 +2,21 @@
 
 namespace bignum {
 
-void BigNumber::_pad_left(size_t count) {
-    _chunks.insert(_chunks.begin(), count, 0);  // insert count zeros at the beginning
-    _exponent += count;
-}
-
 void BigNumber::_set_chunk(const int32_t &exponent, const chunk_t &value) {
     int32_t chunk_index = exponent - _exponent;
-
-    if (chunk_index >= static_cast<int32_t>(_chunks.size())) {
-        _chunks.resize(chunk_index + 1, 0);
-    }
-    if (chunk_index < 0) {
-        _pad_left(-chunk_index);
-        chunk_index = 0;
-    }
-
     _chunks[chunk_index] = value;
 }
 
 const chunk_t BigNumber::_get_chunk(const int32_t &exponent) const {
     int32_t chunk_index = exponent - _exponent;
-    if (chunk_index < 0 || chunk_index >= static_cast<int32_t>(_chunks.size())) {
+    if (chunk_index < 0 || chunk_index >= _size()) {
         return 0;
     }
     return _chunks[chunk_index];
 }
 
 BigNumber::BigNumber(const std::string &number)
-    : _chunks(0, 0), _exponent(0), _is_negative(false) {
+    : _chunks(), _exponent(0), _is_negative(false) {
     if (number.empty()) {
         throw std::invalid_argument("Empty string");
     }
@@ -52,7 +38,8 @@ BigNumber::BigNumber(const std::string &number)
     const size_t &chunks_count = num.size() / CHUNK_DIGITS + (num.size() % CHUNK_DIGITS != 0);
     num = std::string(chunks_count * CHUNK_DIGITS - num.size(), '0') + num;
 
-    _chunks.resize(chunks_count, 0);
+    _chunks = new chunk_t[chunks_count]{0};
+    _chunks_size = chunks_count;
 
     for (size_t i = 0; i < chunks_count; i++) {
         size_t start = num.size() - (i + 1) * CHUNK_DIGITS;
@@ -81,14 +68,14 @@ const BigNumber operator""_bn(const char *number, size_t size) {
 void BigNumber::_strip_zeros() {
     size_t pref_zeros = 0;
     size_t suff_zeros = 0;
-    for (size_t i = 0; i < _chunks.size(); ++i) {
+    for (size_t i = 0; i < _size(); ++i) {
         if (_chunks[i] == 0) {
             pref_zeros++;
         } else {
             break;
         }
     }
-    for (size_t i = _chunks.size(); i > 0; --i) {
+    for (size_t i = _size(); i > 0; --i) {
         if (_chunks[i - 1] == 0) {
             suff_zeros++;
         } else {
@@ -96,15 +83,24 @@ void BigNumber::_strip_zeros() {
         }
     }
 
-    if (pref_zeros == _chunks.size()) {  // if the number is zero
+    if (pref_zeros == _size()) {  // if the number is zero
         _exponent = 0;
         _is_negative = false;
-        _chunks.resize(0, 0);
+        _chunks = nullptr;
         return;
     }
 
     _exponent += pref_zeros;
-    _chunks.erase(_chunks.begin(), _chunks.begin() + pref_zeros);
-    _chunks.resize(_chunks.size() - suff_zeros);
+    size_t new_size = _size() - pref_zeros - suff_zeros;
+    if (new_size == _size()) {
+        return;
+    }
+    chunk_t *new_chunks = new chunk_t[new_size]{0};
+    for (size_t i = 0; i < new_size; ++i) {
+        new_chunks[i] = _chunks[i + pref_zeros];
+    }
+    delete[] _chunks;
+    _chunks = new_chunks;
+    _chunks_size = new_size;
 }
 }  // namespace bignum

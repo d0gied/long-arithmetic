@@ -5,14 +5,14 @@ std::string BigNumber::to_string() const {
     if (_is_zero())
         return "0";
 
-    std::string number;
+    std::string number = "";
     if (_is_negative) {
         number.push_back('-');
     }
 
-    const size_t& chunks = _chunks.size();
+    const size_t& chunks = _size();
     const int32_t& exp = _exponent;
-    const int32_t& max_exp = std::max(exp + static_cast<int32_t>(chunks) - 1, 0);
+    const int32_t& max_exp = std::max(exp + (int32_t)chunks - 1, 0);
     const int32_t& min_exp = std::min(exp, 0);
 
     for (int32_t i = max_exp; i >= min_exp; --i) {

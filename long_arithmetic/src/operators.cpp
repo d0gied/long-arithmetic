@@ -6,8 +6,8 @@ bool operator==(const BigNumber& a, const BigNumber& b) {
     if (a._is_negative != b._is_negative)
         return false;
 
-    const size_t& a_chunks = a._chunks.size();
-    const size_t& b_chunks = b._chunks.size();
+    const size_t& a_chunks = a._size();
+    const size_t& b_chunks = b._size();
     if (a_chunks != b_chunks)
         return false;
 
@@ -37,8 +37,8 @@ bool operator<(const BigNumber& a, const BigNumber& b) {
         return false;
     }
 
-    const size_t& a_chunks = a._chunks.size();
-    const size_t& b_chunks = b._chunks.size();
+    const size_t& a_chunks = a._size();
+    const size_t& b_chunks = b._size();
     const int32_t& a_exp = a._exponent;
     const int32_t& b_exp = b._exponent;
     const int32_t a_max_exp = a_exp + a_chunks;

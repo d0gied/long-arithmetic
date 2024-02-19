@@ -18,3 +18,11 @@ add_subdirectory(benchmark)
 # Добавьте поддиректорию для ваших тестов
 enable_testing()
 add_subdirectory(tests)
+
+set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -DNDEBUG")
+
+message(STATUS "CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
+message(STATUS "CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
+
+message(STATUS "CURRENT ENVIRONMENT: ${CMAKE_BUILD_TYPE}")

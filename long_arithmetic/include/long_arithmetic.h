@@ -61,16 +61,18 @@ class BigNumber {
     const BigNumber with_fractional_size(size_t fractional_size) const;
 
    private:
-    std::vector<chunk_t> _chunks;  // array of digit chunks
-    int32_t _exponent;             // exponent of the number
-    bool _is_negative;             // true if the number is negative
+    chunk_t *_chunks;     // array of chunks
+    size_t _chunks_size;  // size of the array
+    int32_t _exponent;    // exponent of the number
+    bool _is_negative;    // true if the number is negative
 
-    BigNumber() : _chunks(0, 0), _exponent(0), _is_negative(false){};                          // default constructor
-    BigNumber(const chunk_t &chunk) : _chunks(1, chunk), _exponent(0), _is_negative(false){};  // constructor for a single chunk
+    BigNumber() : _chunks(nullptr), _chunks_size(0), _exponent(0), _is_negative(false){};                                    // default constructor
+    BigNumber(const chunk_t &chunk) : _chunks(new chunk_t[1]{chunk}), _chunks_size(1), _exponent(0), _is_negative(false){};  // constructor for a single chunk
+    BigNumber(chunk_t *chunks, size_t chunks_size);
 
+    size_t _size() const { return _chunks_size; }                    // get the size of the number
     const chunk_t _get_chunk(const int32_t &exponent) const;         // get the chunk at the given exponent
     void _set_chunk(const int32_t &exponent, const chunk_t &value);  // set the chunk at the given exponent
-    void _pad_left(size_t count);                                    // pad the number with zeros on the left
 
     void _strip_zeros();
     bool _is_zero() const;
@@ -81,6 +83,7 @@ class BigNumber {
     const BigNumber _add(const BigNumber &other) const;
     const BigNumber _subtract(const BigNumber &other) const;
     const BigNumber _multiply(const BigNumber &other) const;
+    const BigNumber _multiply_simple(const BigNumber &other) const;
     const BigNumber _divide(const BigNumber &other) const;
 
     const BigNumber _shift(int32_t shift) const;
