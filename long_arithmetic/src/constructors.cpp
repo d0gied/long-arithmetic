@@ -49,6 +49,28 @@ BigNumber::BigNumber(const std::string &number)
     _strip_zeros();
 }
 
+BigNumber::BigNumber(chunk_t *chunks, size_t chunks_size)
+    : _chunks(chunks),
+      _chunks_size(chunks_size),
+      _is_negative(false),
+      _exponent(0) {
+    size_t new_size = chunks_size;
+    while (new_size > 0 && chunks[0] == 0) {
+        ++chunks;
+        --new_size;
+        _exponent++;
+    }
+    while (new_size > 0 && chunks[new_size - 1] == 0) {
+        --new_size;
+    }
+    _chunks_size = new_size;
+    if (new_size == 0) {
+        _chunks = nullptr;
+    } else {
+        _chunks = chunks;
+    }
+}
+
 BigNumber::BigNumber(const int &other) : BigNumber(std::to_string(other)) {}
 BigNumber::BigNumber(const long &other) : BigNumber(std::to_string(other)) {}
 BigNumber::BigNumber(const long long &other) : BigNumber(std::to_string(other)) {}

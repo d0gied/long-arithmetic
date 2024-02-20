@@ -86,4 +86,8 @@ const BigNumber operator*(const BigNumber& a, const BigNumber& b) {
     return a._multiply(b);
 }
 
+const BigNumber operator/(const BigNumber& a, const BigNumber& b) {
+    return a._divide(b);
+}
+
 }  // namespace bignum

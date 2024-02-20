@@ -5,6 +5,10 @@ const BigNumber BigNumber::_subtract(const BigNumber& other) const {
     if (_is_negative != other._is_negative) {
         return _add(other._negate());
     }
+    if (_is_zero())
+        return other._negate();
+    if (other._is_zero())
+        return *this;
 
     if (_abs() < other._abs()) {
         return other._subtract(*this)._negate();

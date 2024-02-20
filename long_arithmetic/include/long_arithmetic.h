@@ -25,7 +25,7 @@ typedef uint8_t chunk_t;
 #error "Invalid CHUNK_SIZE"
 #endif
 
-const size_t CHUNK_BASE = static_cast<size_t>(std::pow(10, CHUNK_DIGITS));
+const chunk_t CHUNK_BASE = static_cast<chunk_t>(std::pow(10, CHUNK_DIGITS));
 const chunk_t MAX_CHUNK = CHUNK_BASE - 1;
 
 namespace bignum {
@@ -41,8 +41,6 @@ class BigNumber {
 
     friend const BigNumber operator""_bn(const char *number);
     friend const BigNumber operator""_bn(const char *number, size_t size);
-
-    // BigNumber(const BigNumber &other);
 
     friend bool operator==(const BigNumber &a, const BigNumber &b);
     friend bool operator!=(const BigNumber &a, const BigNumber &b);
@@ -89,9 +87,6 @@ class BigNumber {
     const BigNumber _divide(const BigNumber &other) const;
 
     const BigNumber _shift(int32_t shift) const;
-
-    const BigNumber _int_divide(const BigNumber &other) const;
-    const BigNumber _divide2() const;
 
     const size_t _int_chunks_count() const;
     const size_t _frac_chunks_count() const;

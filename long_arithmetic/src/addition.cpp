@@ -8,6 +8,10 @@ const BigNumber BigNumber::_add(const BigNumber& other) const {
 
     const BigNumber& a = *this;
     const BigNumber& b = other;
+    if (a._is_zero())
+        return b;
+    if (b._is_zero())
+        return a;
 
     const size_t& a_chunks = a._size();
     const size_t& b_chunks = b._size();

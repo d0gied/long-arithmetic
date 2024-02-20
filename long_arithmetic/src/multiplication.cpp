@@ -3,23 +3,6 @@
 #define MULTIPLY_THRESHOLD 42
 
 namespace bignum {
-BigNumber::BigNumber(chunk_t* chunks, size_t chunks_size)
-    : _chunks(chunks),
-      _chunks_size(chunks_size),
-      _is_negative(false),
-      _exponent(0) {
-    size_t new_size = chunks_size;
-    while (new_size > 0 && chunks[0] == 0) {
-        ++chunks;
-        --new_size;
-        _exponent++;
-    }
-    while (new_size > 0 && chunks[new_size - 1] == 0) {
-        --new_size;
-    }
-    _chunks = chunks;
-    _chunks_size = new_size;
-}
 
 const BigNumber BigNumber::_multiply(const BigNumber& other) const {
     if (_is_zero() || other._is_zero()) {
@@ -38,11 +21,22 @@ const BigNumber BigNumber::_multiply(const BigNumber& other) const {
     }
 
     const size_t& m = n / 2;
+    BigNumber a0_bn, a1_bn, b0_bn, b1_bn;
 
-    BigNumber a0_bn(a._chunks + m, a_chunks - m);
-    BigNumber a1_bn(a._chunks, m);
-    BigNumber b0_bn(b._chunks + m, b_chunks - m);
-    BigNumber b1_bn(b._chunks, m);
+    if (m >= a_chunks) {
+        a0_bn = "0";
+        a1_bn = a;
+    } else {
+        a0_bn = BigNumber(a._chunks + m, a_chunks - m);
+        a1_bn = BigNumber(a._chunks, m);
+    }
+    if (m >= b_chunks) {
+        b0_bn = "0";
+        b1_bn = a;
+    } else {
+        b0_bn = BigNumber(b._chunks + m, b_chunks - m);
+        b1_bn = BigNumber(b._chunks, m);
+    }
 
     BigNumber z0 = a0_bn._multiply(b0_bn);
     BigNumber z1 = (a0_bn + a1_bn)._multiply(b0_bn + b1_bn);
