@@ -1,6 +1,6 @@
 #include <long_arithmetic.h>
 
-const size_t DIVISION_CHUNKS = 100;
+const size_t DIVISION_CHUNKS = 1000;
 
 namespace bignum {
 
@@ -37,7 +37,8 @@ const BigNumber BigNumber::_divide(const BigNumber& other) const {
     size_t i = 0;
     mul_chunk_t carry = 0;
     const mul_chunk_t b0 = b._chunks[0];
-    while (i++ < DIVISION_CHUNKS && !a._is_zero()) {
+    int32_t integer_chunks = a_max_exp - b_max_exp + 1;
+    while (i++ < integer_chunks + DIVISION_CHUNKS && !a._is_zero()) {
         carry *= CHUNK_BASE;
         carry += a._get_chunk(current_exp);
         if (carry < b0) {
@@ -58,7 +59,6 @@ const BigNumber BigNumber::_divide(const BigNumber& other) const {
         current_exp--;
     }
 
-    int32_t integer_chunks = a_max_exp - b_max_exp + 1;
     int32_t result_exp = integer_chunks - result_chunks.size();
     chunk_t* result_chunks_reversed = new chunk_t[result_chunks.size()];
     for (size_t i = 0; i < result_chunks.size(); ++i) {
