@@ -6,18 +6,20 @@
 #include <string>
 #include <vector>
 
-#define CHUNK_SIZE 64   // number of bits in a batch
-#define CHUNK_DIGITS 9  // number of decimal digits in a batch
+#define CHUNK_SIZE 64    // number of bits in a batch
+#define CHUNK_DIGITS 19  // number of decimal digits in a batch
 
-#if CHUNK_SIZE == 128
-typedef __uint128_t chunk_t;
-#elif CHUNK_SIZE == 64
+#if CHUNK_SIZE == 64
+typedef __uint128_t mul_chunk_t;
 typedef uint64_t chunk_t;
 #elif CHUNK_SIZE == 32
+typedef uint64_t mul_chunk_t;
 typedef uint32_t chunk_t;
 #elif CHUNK_SIZE == 16
+typedef uint32_t mul_chunk_t;
 typedef uint16_t chunk_t;
 #elif CHUNK_SIZE == 8
+typedef uint16_t mul_chunk_t;
 typedef uint8_t chunk_t;
 #else
 #error "Invalid CHUNK_SIZE"
@@ -88,8 +90,8 @@ class BigNumber {
 
     const BigNumber _shift(int32_t shift) const;
 
-    const chunk_t _chunk_divide(const BigNumber &a, const BigNumber &b, size_t shift) const;
-    const bool _is_less(const BigNumber &a, const BigNumber &b, size_t shift) const;
+    const BigNumber _int_divide(const BigNumber &other) const;
+    const BigNumber _divide2() const;
 
     const size_t _int_chunks_count() const;
     const size_t _frac_chunks_count() const;

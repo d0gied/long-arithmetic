@@ -87,6 +87,7 @@ void BigNumber::_strip_zeros() {
         _exponent = 0;
         _is_negative = false;
         _chunks = nullptr;
+        _chunks_size = 0;
         return;
     }
 

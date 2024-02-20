@@ -9,7 +9,7 @@ BigNumber::BigNumber(chunk_t* chunks, size_t chunks_size)
       _is_negative(false),
       _exponent(0) {
     size_t new_size = chunks_size;
-    while (*chunks == 0 && new_size > 0) {
+    while (new_size > 0 && chunks[0] == 0) {
         ++chunks;
         --new_size;
         _exponent++;
@@ -78,9 +78,9 @@ const BigNumber BigNumber::_multiply_simple(const BigNumber& other) const {
     for (int32_t i = 0; i < a_chunks; ++i) {
         carry = 0;
         for (int32_t j = 0; j < b_chunks; ++j) {
-            chunk_t a_chunk = _chunks[i];
-            chunk_t b_chunk = other._chunks[j];
-            chunk_t product = a_chunk * b_chunk + c._chunks[i + j] + carry;
+            mul_chunk_t a_chunk = (mul_chunk_t)_chunks[i];
+            mul_chunk_t b_chunk = (mul_chunk_t)other._chunks[j];
+            mul_chunk_t product = a_chunk * b_chunk + c._chunks[i + j] + carry;
             carry = product / CHUNK_BASE;
             c._chunks[i + j] = product % CHUNK_BASE;
         }
