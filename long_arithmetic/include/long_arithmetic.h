@@ -29,6 +29,8 @@ const chunk_t CHUNK_BASE = static_cast<chunk_t>(std::pow(10, CHUNK_DIGITS));
 const chunk_t MAX_CHUNK = CHUNK_BASE - 1;
 
 namespace bignum {
+void SET_DIV_PRECISION(size_t precision);
+
 class BigNumber {
    public:
     BigNumber(const std::string &number);
