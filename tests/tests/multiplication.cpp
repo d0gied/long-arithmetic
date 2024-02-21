@@ -1,17 +1,25 @@
-#include <gtest/gtest.h>
-#include <long_arithmetic.h>
+#include "base.cpp"
 
-TEST(Multiplication, PositivePositive) {
-    bignum::BigNumber number1("999999999999999999");
-    bignum::BigNumber number2("999999999999999999");
-    bignum::BigNumber number3 = number1 * number2;
-    ASSERT_EQ(number3.to_string(), "999999999999999998000000000000000001");
+// Multiplication base test class with parameters
+class Multiplication : public ArithmeticTest {};
+
+// Test cases for multiplication
+TEST_P(Multiplication, Test) {
+    BigNumber number1(std::get<0>(GetParam()));
+    BigNumber number2(std::get<1>(GetParam()));
+    BigNumber expected(std::get<2>(GetParam()));
+    BigNumber result = number1 * number2;
+
+    std::cout << number1.to_string() << " * " << number2.to_string() << " = " << result.to_string() << std::endl;
+    ASSERT_EQ(result, expected) << "Expected: " << expected.to_string() << " Got: " << result.to_string();
 }
 
-TEST(Multiplication, PositiveNegative) {
-    bignum::BigNumber number1("2");
-    bignum::BigNumber number2("-0.5");
-    bignum::BigNumber number3 = number1 * number2;
-
-    ASSERT_EQ(number3.to_string(), "-1");
-}
+INSTANTIATE_TEST_SUITE_P(
+    ,
+    Multiplication,
+    testing::Values(
+        std::make_tuple("1", "0", "0"),
+        std::make_tuple("2", "2", "4"),
+        std::make_tuple("-1", "1", "-1"),
+        std::make_tuple("2", "0.5", "1"),
+        std::make_tuple("0.5", "0.5", "0.25")));

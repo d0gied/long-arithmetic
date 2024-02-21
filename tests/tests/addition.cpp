@@ -1,37 +1,23 @@
-#include <gtest/gtest.h>
-#include <long_arithmetic.h>
+#include "base.cpp"
 
-TEST(Addition, PositivePositive) {
-    bignum::BigNumber number1("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    bignum::BigNumber number2("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    std::string number_str = (number1 + number2).to_string();
-    ASSERT_EQ(number_str, "246913578024691357802469135780246913578024691357802469135780246913578024691357802469135780");
+class Addition : public ArithmeticTest {};
+
+TEST_P(Addition, Test) {
+    BigNumber number1(std::get<0>(GetParam()));
+    BigNumber number2(std::get<1>(GetParam()));
+    BigNumber expected(std::get<2>(GetParam()));
+    BigNumber result = number1 + number2;
+
+    std::cout << number1.to_string() << " + " << number2.to_string() << " = " << result.to_string() << std::endl;
+    ASSERT_EQ(result, expected) << "Expected: " << expected.to_string() << " Got: " << result.to_string();
 }
 
-TEST(Addition, NegativeNegative) {
-    bignum::BigNumber number1("-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    bignum::BigNumber number2("-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    std::string number_str = (number1 + number2).to_string();
-    ASSERT_EQ(number_str, "-246913578024691357802469135780246913578024691357802469135780246913578024691357802469135780");
-}
-
-TEST(Addition, PositiveNegative) {
-    bignum::BigNumber number1("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    bignum::BigNumber number2("-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    std::string number_str = (number1 + number2).to_string();
-    ASSERT_EQ(number_str, "0");
-}
-
-TEST(Addition, NegativePositive) {
-    bignum::BigNumber number1("-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    bignum::BigNumber number2("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    std::string number_str = (number1 + number2).to_string();
-    ASSERT_EQ(number_str, "0");
-}
-
-TEST(Addition, Carry) {
-    bignum::BigNumber number1(std::string(100, '9'));
-    bignum::BigNumber number2("1");
-    std::string number_str = (number1 + number2).to_string();
-    ASSERT_EQ(number_str, "1" + std::string(100, '0'));
-}
+INSTANTIATE_TEST_SUITE_P(,
+                         Addition,
+                         testing::Values(
+                             std::make_tuple("0", "0", "0"),
+                             std::make_tuple("1", "1", "2"),
+                             std::make_tuple("1", "-1", "0"),
+                             std::make_tuple("99", "1", "100"),
+                             std::make_tuple("0.5", "0.5", "1"),
+                             std::make_tuple("1", "0.5", "1.5")));

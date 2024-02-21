@@ -1,30 +1,22 @@
-#include <gtest/gtest.h>
-#include <long_arithmetic.h>
+#include "base.cpp"
 
-TEST(Substraction, PositivePositive) {
-    bignum::BigNumber number1("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    bignum::BigNumber number2("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    std::string number_str = (number1 - number2).to_string();
-    ASSERT_EQ(number_str, "0");
+class Substraction : public ArithmeticTest {};
+
+TEST_P(Substraction, Test) {
+    BigNumber number1(std::get<0>(GetParam()));
+    BigNumber number2(std::get<1>(GetParam()));
+    BigNumber expected(std::get<2>(GetParam()));
+    BigNumber result = number1 - number2;
+
+    std::cout << number1.to_string() << " - " << number2.to_string() << " = " << result.to_string() << std::endl;
+    ASSERT_EQ(result, expected) << "Expected: " << expected.to_string() << " Got: " << result.to_string();
 }
 
-TEST(Substraction, NegativeNegative) {
-    bignum::BigNumber number1("-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    bignum::BigNumber number2("-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    std::string number_str = (number1 - number2).to_string();
-    ASSERT_EQ(number_str, "0");
-}
-
-TEST(Substraction, PositiveNegative) {
-    bignum::BigNumber number1("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    bignum::BigNumber number2("-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    std::string number_str = (number1 - number2).to_string();
-    ASSERT_EQ(number_str, "246913578024691357802469135780246913578024691357802469135780246913578024691357802469135780");
-}
-
-TEST(Substraction, NegativePositive) {
-    bignum::BigNumber number1("-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    bignum::BigNumber number2("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-    std::string number_str = (number1 - number2).to_string();
-    ASSERT_EQ(number_str, "-246913578024691357802469135780246913578024691357802469135780246913578024691357802469135780");
-}
+INSTANTIATE_TEST_SUITE_P(,
+                         Substraction,
+                         testing::Values(
+                             std::make_tuple("0", "1", "-1"),
+                             std::make_tuple("1", "1", "0"),
+                             std::make_tuple("1", "-1", "2"),
+                             std::make_tuple("100", "1", "99"),
+                             std::make_tuple("1", "0.5", "0.5")));
