@@ -17,11 +17,11 @@ const BigNumber BigNumber::_subtract(const BigNumber& other) const {
     const BigNumber& a = *this;
     const BigNumber& b = other;
 
-    const size_t& a_chunks = a._size();
-    const size_t& b_chunks = b._size();
+    const size_t a_chunks = a._size();
+    const size_t b_chunks = b._size();
 
-    const int32_t& max_exp = std::max(a._exponent + a_chunks, b._exponent + b_chunks);
-    const int32_t& min_exp = std::min(a._exponent, b._exponent);
+    const int32_t max_exp = std::max(a._exponent + a_chunks, b._exponent + b_chunks);
+    const int32_t min_exp = std::min(a._exponent, b._exponent);
 
     BigNumber c;
     c._is_negative = _is_negative;
@@ -42,7 +42,7 @@ const BigNumber BigNumber::_subtract(const BigNumber& other) const {
             diff = a_chunk - b_chunk - borrow;
             borrow = 0;
         }
-        c._set_chunk(i + min_exp, diff);
+        c._chunks[i] = diff;
     }
 
     c._strip_zeros();

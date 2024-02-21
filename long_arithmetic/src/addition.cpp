@@ -13,11 +13,11 @@ const BigNumber BigNumber::_add(const BigNumber& other) const {
     if (b._is_zero())
         return a;
 
-    const size_t& a_chunks = a._size();
-    const size_t& b_chunks = b._size();
+    const int32_t a_chunks = a._size();
+    const int32_t b_chunks = b._size();
 
-    const int32_t& max_exp = std::max(a._exponent + a_chunks, b._exponent + b_chunks);
-    const int32_t& min_exp = std::min(a._exponent, b._exponent);
+    const int32_t max_exp = std::max(a._exponent + a_chunks, b._exponent + b_chunks);
+    const int32_t min_exp = std::min(a._exponent, b._exponent);
 
     BigNumber c;
     c._is_negative = _is_negative;

@@ -7,7 +7,7 @@
 #include <vector>
 
 #define CHUNK_SIZE 64    // number of bits in a batch
-#define CHUNK_DIGITS 19  // number of decimal digits in a batch
+#define CHUNK_DIGITS 18  // number of decimal digits in a batch
 
 #if CHUNK_SIZE == 64
 typedef __uint128_t mul_chunk_t;
@@ -41,8 +41,7 @@ class BigNumber {
     BigNumber(const float &other);
     BigNumber(const double &other);
 
-    friend const BigNumber operator""_bn(const char *number);
-    friend const BigNumber operator""_bn(const char *number, size_t size);
+    // friend const BigNumber operator""_bn(const char *number, size_t size);
 
     friend bool operator==(const BigNumber &a, const BigNumber &b);
     friend bool operator!=(const BigNumber &a, const BigNumber &b);
@@ -93,5 +92,42 @@ class BigNumber {
     const size_t _int_chunks_count() const;
     const size_t _frac_chunks_count() const;
 };
+
+const BigNumber operator""_bn(const char *number, size_t size);
+
+namespace math {
+
+class Fraction {
+   public:
+    Fraction(const bignum::BigNumber &numerator, const bignum::BigNumber &denominator);
+    Fraction(const bignum::BigNumber &numerator);
+
+    const bignum::BigNumber to_decimal() const;
+
+    friend const Fraction operator+(const Fraction &a, const Fraction &b);
+    friend const Fraction operator-(const Fraction &a, const Fraction &b);
+    friend const Fraction operator*(const Fraction &a, const Fraction &b);
+    friend const Fraction operator/(const Fraction &a, const Fraction &b);
+
+    friend const bool operator==(const Fraction &a, const Fraction &b);
+    friend const bool operator!=(const Fraction &a, const Fraction &b);
+    friend const bool operator<(const Fraction &a, const Fraction &b);
+    friend const bool operator>(const Fraction &a, const Fraction &b);
+    friend const bool operator<=(const Fraction &a, const Fraction &b);
+    friend const bool operator>=(const Fraction &a, const Fraction &b);
+
+    const std::string to_string() const;
+
+    const Fraction operator-() const;
+
+   private:
+    bignum::BigNumber _numerator;
+    bignum::BigNumber _denominator;
+};
+const Fraction operator""_fr(const char *number, size_t size);
+
+const bignum::BigNumber sqrt(const bignum::BigNumber &number);
+const bignum::BigNumber PiFast(size_t n);
+}  // namespace math
 
 }  // namespace bignum

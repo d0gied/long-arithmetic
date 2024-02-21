@@ -90,4 +90,8 @@ const BigNumber operator/(const BigNumber& a, const BigNumber& b) {
     return a._divide(b);
 }
 
+const BigNumber BigNumber::operator-() const {
+    return _negate();
+}
+
 }  // namespace bignum

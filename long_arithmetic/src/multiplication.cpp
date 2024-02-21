@@ -11,27 +11,27 @@ const BigNumber BigNumber::_multiply(const BigNumber& other) const {
     const BigNumber& a = *this;
     const BigNumber& b = other;
 
-    const size_t& a_chunks = a._size();
-    const size_t& b_chunks = b._size();
+    const size_t a_chunks = a._size();
+    const size_t b_chunks = b._size();
 
-    const size_t& n = std::max(a_chunks, b_chunks);
+    const size_t n = std::max(a_chunks, b_chunks);
 
-    if (n <= MULTIPLY_THRESHOLD) {
+    if (a_chunks <= MULTIPLY_THRESHOLD || b_chunks <= MULTIPLY_THRESHOLD) {
         return _multiply_simple(other);
     }
 
-    const size_t& m = n / 2;
+    const size_t m = n / 2;
     BigNumber a0_bn, a1_bn, b0_bn, b1_bn;
 
     if (m >= a_chunks) {
-        a0_bn = "0";
+        a0_bn = "0"_bn;
         a1_bn = a;
     } else {
         a0_bn = BigNumber(a._chunks + m, a_chunks - m);
         a1_bn = BigNumber(a._chunks, m);
     }
     if (m >= b_chunks) {
-        b0_bn = "0";
+        b0_bn = "0"_bn;
         b1_bn = a;
     } else {
         b0_bn = BigNumber(b._chunks + m, b_chunks - m);
@@ -59,8 +59,8 @@ const BigNumber BigNumber::_multiply_simple(const BigNumber& other) const {
 
     const BigNumber& a = *this;
     const BigNumber& b = other;
-    const size_t& a_chunks = a._size();
-    const size_t& b_chunks = b._size();
+    const size_t a_chunks = a._size();
+    const size_t b_chunks = b._size();
 
     BigNumber c;
     c._is_negative = _is_negative != other._is_negative;

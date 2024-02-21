@@ -26,3 +26,6 @@ message(STATUS "CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
 message(STATUS "CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
 
 message(STATUS "CURRENT ENVIRONMENT: ${CMAKE_BUILD_TYPE}")
+
+add_executable(main main.cpp)
+target_link_libraries(main long_arithmetic)

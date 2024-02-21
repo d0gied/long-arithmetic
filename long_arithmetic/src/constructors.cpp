@@ -77,10 +77,6 @@ BigNumber::BigNumber(const long long &other) : BigNumber(std::to_string(other)) 
 BigNumber::BigNumber(const float &other) : BigNumber(std::to_string(other)) {}
 BigNumber::BigNumber(const double &other) : BigNumber(std::to_string(other)) {}
 
-const BigNumber operator""_bn(const char *number) {
-    return BigNumber(std::string(number));
-}
-
 const BigNumber operator""_bn(const char *number, size_t size) {
     return BigNumber(std::string(number, size));
 }
