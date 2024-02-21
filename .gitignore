@@ -27,3 +27,5 @@ _deps
 /.cache
 
 /test_results.xml
+
+compose-dev.yaml

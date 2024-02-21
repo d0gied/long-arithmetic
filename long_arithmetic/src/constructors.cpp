@@ -48,7 +48,7 @@ BigNumber::BigNumber(const std::string &number)
     _strip_zeros();
 }
 
-BigNumber::BigNumber(std::vector<const chunk_t>::iterator begin, std::vector<const chunk_t>::iterator end)
+BigNumber::BigNumber(std::vector<chunk_t>::const_iterator begin, std::vector<chunk_t>::const_iterator end)
     : _chunks(0, 0),
       _is_negative(false),
       _exponent(0) {

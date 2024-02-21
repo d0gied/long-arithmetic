@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include <stdexcept>
+
 #define CHUNK_SIZE 64    // number of bits in a batch
 #define CHUNK_DIGITS 18  // number of decimal digits in a batch
 
@@ -68,7 +70,7 @@ class BigNumber {
 
     BigNumber() : _chunks(0, 0), _exponent(0), _is_negative(false){};                                 // default constructor
     BigNumber(const chunk_t &chunk) : _chunks(1, chunk), _exponent(0), _is_negative(false){};         // constructor for a single chunk
-    BigNumber(std::vector<const chunk_t>::iterator begin, std::vector<const chunk_t>::iterator end);  // constructor from a range of chunks
+    BigNumber(std::vector<chunk_t>::const_iterator begin, std::vector<chunk_t>::const_iterator end);  // constructor from a range of chunks
 
     size_t _size() const { return _chunks.size(); }                  // get the size of the number
     const chunk_t _get_chunk(const int32_t &exponent) const;         // get the chunk at the given exponent
