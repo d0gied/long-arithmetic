@@ -15,7 +15,7 @@ const BigNumber BigNumber::_negate() const {
 }
 
 bool BigNumber::_is_zero() const {
-    return _chunks == nullptr || _size() == 0;
+    return _size() == 0;
 }
 
 const BigNumber BigNumber::_shift(int32_t exp) const {

@@ -21,9 +21,9 @@ size_t count_precision(const std::string& str) {
 }
 
 int main() {
-    bignum::SET_DIV_PRECISION(300);
+    bignum::SET_DIV_PRECISION(800);
     time_t start = clock();
-    BigNumber pi = bignum::math::PiFast(21);
+    BigNumber pi = bignum::math::PiFast(23);
     time_t end = clock();
 
     std::cout << "Time: " << (end - start) * 1000 / CLOCKS_PER_SEC << "ms" << std::endl;

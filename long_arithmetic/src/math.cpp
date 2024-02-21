@@ -109,9 +109,8 @@ const bignum::BigNumber PiFast(size_t n) {
                             (k_bn * k_bn * k_bn * "26680"_bn * "640320"_bn * "640320"_bn));
         Fraction val = ak * ("13591409"_fr + "545140134"_fr * Fraction(k_bn));
         pi = pi + val;
-        // if (k % 10 == 0) {
-        //     pi = pi.to_decimal();
     }
+    BigNumber _pi = pi.to_decimal();
 
     pi = pi * sqrt_10005;
     pi = "4270934400"_fr / pi;

@@ -17,17 +17,16 @@ const BigNumber BigNumber::_subtract(const BigNumber& other) const {
     const BigNumber& a = *this;
     const BigNumber& b = other;
 
-    const size_t a_chunks = a._size();
-    const size_t b_chunks = b._size();
+    int32_t a_chunks = a._size();
+    int32_t b_chunks = b._size();
 
-    const int32_t max_exp = std::max(a._exponent + a_chunks, b._exponent + b_chunks);
-    const int32_t min_exp = std::min(a._exponent, b._exponent);
+    int32_t max_exp = std::max(a._exponent + a_chunks, b._exponent + b_chunks);
+    int32_t min_exp = std::min(a._exponent, b._exponent);
 
     BigNumber c;
     c._is_negative = _is_negative;
-    const size_t c_size = max_exp - min_exp + 1;
-    c._chunks = new chunk_t[c_size]{0};
-    c._chunks_size = c_size;
+    size_t c_size = max_exp - min_exp + 1;
+    c._chunks.resize(c_size, 0);
     c._exponent = min_exp;
 
     chunk_t borrow = 0;

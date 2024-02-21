@@ -62,16 +62,15 @@ class BigNumber {
     const BigNumber with_fractional_size(size_t fractional_size) const;
 
    private:
-    chunk_t *_chunks;     // array of chunks
-    size_t _chunks_size;  // size of the array
-    int32_t _exponent;    // exponent of the number
-    bool _is_negative;    // true if the number is negative
+    std::vector<chunk_t> _chunks;  // array of chunks
+    int32_t _exponent;             // exponent of the number
+    bool _is_negative;             // true if the number is negative
 
-    BigNumber() : _chunks(nullptr), _chunks_size(0), _exponent(0), _is_negative(false){};                                    // default constructor
-    BigNumber(const chunk_t &chunk) : _chunks(new chunk_t[1]{chunk}), _chunks_size(1), _exponent(0), _is_negative(false){};  // constructor for a single chunk
-    BigNumber(chunk_t *chunks, size_t chunks_size);
+    BigNumber() : _chunks(0, 0), _exponent(0), _is_negative(false){};                                 // default constructor
+    BigNumber(const chunk_t &chunk) : _chunks(1, chunk), _exponent(0), _is_negative(false){};         // constructor for a single chunk
+    BigNumber(std::vector<const chunk_t>::iterator begin, std::vector<const chunk_t>::iterator end);  // constructor from a range of chunks
 
-    size_t _size() const { return _chunks_size; }                    // get the size of the number
+    size_t _size() const { return _chunks.size(); }                  // get the size of the number
     const chunk_t _get_chunk(const int32_t &exponent) const;         // get the chunk at the given exponent
     void _set_chunk(const int32_t &exponent, const chunk_t &value);  // set the chunk at the given exponent
 

@@ -10,10 +10,10 @@ std::string BigNumber::to_string() const {
         number.push_back('-');
     }
 
-    const size_t& chunks = _size();
-    const int32_t& exp = _exponent;
-    const int32_t& max_exp = std::max(exp + (int32_t)chunks - 1, 0);
-    const int32_t& min_exp = std::min(exp, 0);
+    size_t chunks = _size();
+    int32_t exp = _exponent;
+    int32_t max_exp = std::max(exp + (int32_t)chunks - 1, 0);
+    int32_t min_exp = std::min(exp, 0);
 
     for (int32_t i = max_exp; i >= min_exp; --i) {
         if (i == -1) {

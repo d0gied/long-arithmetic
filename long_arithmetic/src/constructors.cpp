@@ -38,8 +38,7 @@ BigNumber::BigNumber(const std::string &number)
     const size_t &chunks_count = num.size() / CHUNK_DIGITS + (num.size() % CHUNK_DIGITS != 0);
     num = std::string(chunks_count * CHUNK_DIGITS - num.size(), '0') + num;
 
-    _chunks = new chunk_t[chunks_count]{0};
-    _chunks_size = chunks_count;
+    _chunks.resize(chunks_count);
 
     for (size_t i = 0; i < chunks_count; i++) {
         size_t start = num.size() - (i + 1) * CHUNK_DIGITS;
@@ -49,25 +48,22 @@ BigNumber::BigNumber(const std::string &number)
     _strip_zeros();
 }
 
-BigNumber::BigNumber(chunk_t *chunks, size_t chunks_size)
-    : _chunks(chunks),
-      _chunks_size(chunks_size),
+BigNumber::BigNumber(std::vector<const chunk_t>::iterator begin, std::vector<const chunk_t>::iterator end)
+    : _chunks(0, 0),
       _is_negative(false),
       _exponent(0) {
-    size_t new_size = chunks_size;
-    while (new_size > 0 && chunks[0] == 0) {
-        ++chunks;
+    size_t new_size = end - begin;
+    while (new_size > 0 && *begin == 0) {
+        ++begin;
         --new_size;
         _exponent++;
     }
-    while (new_size > 0 && chunks[new_size - 1] == 0) {
-        --new_size;
+    while (new_size > 0 && *(end - 1) == 0) {
+        --end;
+        new_size--;
     }
-    _chunks_size = new_size;
-    if (new_size == 0) {
-        _chunks = nullptr;
-    } else {
-        _chunks = chunks;
+    if (new_size > 0) {
+        _chunks = std::vector<chunk_t>(begin, end);
     }
 }
 
@@ -104,8 +100,7 @@ void BigNumber::_strip_zeros() {
     if (pref_zeros == _size()) {  // if the number is zero
         _exponent = 0;
         _is_negative = false;
-        _chunks = nullptr;
-        _chunks_size = 0;
+        _chunks.clear();
         return;
     }
 
@@ -114,12 +109,8 @@ void BigNumber::_strip_zeros() {
     if (new_size == _size()) {
         return;
     }
-    chunk_t *new_chunks = new chunk_t[new_size]{0};
-    for (size_t i = 0; i < new_size; ++i) {
-        new_chunks[i] = _chunks[i + pref_zeros];
-    }
-    delete[] _chunks;
-    _chunks = new_chunks;
-    _chunks_size = new_size;
+
+    _chunks.erase(_chunks.begin(), _chunks.begin() + pref_zeros);
+    _chunks.resize(new_size);
 }
 }  // namespace bignum
