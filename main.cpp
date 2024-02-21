@@ -21,7 +21,7 @@ size_t count_precision(const std::string& str) {
 }
 
 int main() {
-    bignum::SET_DIV_PRECISION(800);
+    bignum::SET_DIV_PRECISION(400);
     time_t start = clock();
     BigNumber pi = bignum::math::PiFast(23);
     time_t end = clock();
