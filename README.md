@@ -6,7 +6,7 @@ C++ implementation of long arithmetics.
 
 - [Long Arithmetic](#long-arithmetic)
   - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
+  - [Build](#build)
   - [Usage](#usage)
   - [Task](#task)
   - [Test](#test)
@@ -16,9 +16,8 @@ C++ implementation of long arithmetics.
     - [Results](#results)
   - [Plan](#plan)
     - [Optional](#optional)
-  - [Development](#development)
   
-## Installation
+## Build
 
 ```bash
 git clone https://github.com/d0gied/long-arithmetic.git
@@ -27,18 +26,18 @@ git submodule update --init --recursive
 mkdir build
 cd build
 cmake ..
-cmake --install .
+cmake --build .
 ```
 
 ## Usage
 
 ```cpp
 #include <iostream>
-#include "long_arithmetic.h"
+#include <long_arithmetic.h>
 
 int main() {
-  bignum::BigNumber a = 123;
-  bignum::BigNumber b = "123456789012345678901234567890";
+  bignum::BigNumber a = "123"_bn;
+  bignum::BigNumber b = "123456789012345678901234567890"_bn;
   std::cout << a + b << std::endl;
   return 0;
 }
@@ -137,24 +136,11 @@ SubstractionLongToLong/1048576       7.18 ms         7.11 ms           97
 7. [x] Add basic comparison operations for BigNumber.
 8. [x] Add addition and subtraction operations for BigNumber.
 9. [x] Add multiplication operation for BigNumber. 
-10. [ ] Add division operation for BigNumber.
-11. [ ] Implement Pi calculation with given precision.
-12. [ ] Measure time of Pi calculation.
+10. [x] Add division operation for BigNumber.
+11. [x] Implement Pi calculation with given precision.
+12. [x] Measure time of Pi calculation.
 
 ### Optional
 
 1. [x] Add conversion from float to BigNumber.
 2. [x] Add benchmark for BigNumber.
-
-
-## Development
-
-```bash
-git clone https://github.com/d0gied/long-arithmetic.git
-cd long-arithmetic
-git submodule update --init --recursive
-mkdir build
-cd build
-cmake ..
-make
-```
